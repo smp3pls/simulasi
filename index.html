@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cerdas Cermat SD/MI Pulaulaut Selatan 2026</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Cinzel:wght@700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    
+    <!-- SweetAlert2 (for nice dialogs instead of alert) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        /* Animated Gradient Background */
+        body {
+            background: linear-gradient(-45deg, #1e3a8a, #3b82f6, #06b6d4, #10b981);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            font-family: 'Inter', sans-serif;
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 1rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        .glass-input {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+        }
+        .glass-input::placeholder { color: rgba(255, 255, 255, 0.7); }
+        .glass-input:focus { outline: none; border-color: white; background: rgba(255, 255, 255, 0.3); }
+
+        .glass-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transition: all 0.3s ease;
+        }
+        .glass-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Hide elements dynamically */
+        .hidden-view { display: none !important; }
+
+        /* Floating Contact Button */
+        .floating-contact {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            border-radius: 50px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .floating-contact:hover { background: rgba(0, 0, 0, 0.7); }
+
+        /* Custom Scrollbar for inner elements */
+        .custom-scroll::-webkit-scrollbar { width: 8px; }
+        .custom-scroll::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.4); border-radius: 10px; }
+
+        /* Print Styles for Certificate */
+        @media print {
+            body * { visibility: hidden; }
+            #cert-print-area, #cert-print-area * { visibility: visible; }
+            #cert-print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                background: white !important;
+            }
+            @page { margin: 0; }
+        }
+
+        /* Certificate Styling */
+        .certificate-wrapper {
+            background: white;
+            color: #333;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+        }
+        .cert-landscape-a4 { width: 297mm; height: 210mm; }
+        .cert-portrait-a4 { width: 210mm; height: 297mm; }
+        .cert-landscape-f4 { width: 330mm; height: 215mm; }
+        .cert-portrait-f4 { width: 215mm; height: 330mm; }
+        
+        .certificate-border {
+            border: 15px solid transparent;
+            border-image: repeating-linear-gradient(45deg, #d4af37, #d4af37 10px, #aa7c11 10px, #aa7c11 20px) 15;
+            padding: 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+        }
+        .certificate-inner {
+            border: 2px solid #d4af37;
+            padding: 40px;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .cert-title { font-family: 'Cinzel', serif; font-size: 3rem; color: #d4af37; margin-bottom: 10px; }
+        .cert-subtitle { font-family: 'Inter', sans-serif; font-size: 1.2rem; color: #555; text-transform: uppercase; letter-spacing: 2px; }
+        .cert-presents { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.5rem; margin: 30px 0 10px; }
+        .cert-name { font-family: 'Cinzel', serif; font-size: 2.5rem; font-weight: bold; color: #111; border-bottom: 2px solid #d4af37; padding-bottom: 5px; display: inline-block; margin-bottom: 20px; }
+        .cert-desc { font-family: 'Inter', sans-serif; font-size: 1.1rem; line-height: 1.6; max-width: 80%; margin: 0 auto; }
+        .cert-footer { margin-top: 50px; display: flex; justify-content: space-around; width: 100%; font-family: 'Inter', sans-serif; }
+        .cert-signature { border-top: 1px solid #333; padding-top: 10px; width: 200px; text-align: center; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <!-- Global Floating Contact -->
+    <a id="btnHubungiAdmin" href="#" target="_blank" class="floating-contact hidden">
+        <i class="fab fa-whatsapp text-green-400 text-2xl"></i>
+        <span>Hubungi Admin</span>
+    </a>
+
+    <!-- Top Navigation (Small) -->
+    <nav class="flex justify-between items-center mb-8 glass px-6 py-4">
+        <div>
+            <h1 class="text-xl md:text-2xl font-bold tracking-wider uppercase drop-shadow-md">
+                <i class="fas fa-graduation-cap mr-2"></i>CBT Cerdas Cermat
+            </h1>
+            <p class="text-sm opacity-80">SD/MI Kec. Pulaulaut Selatan 2026</p>
+        </div>
+        <div class="flex gap-2">
+            <button onclick="switchView('home')" class="glass-btn px-4 py-2 rounded-lg text-sm"><i class="fas fa-home"></i> Beranda</button>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main id="app-container" class="max-w-6xl mx-auto relative">
+        
+        <!-- Loading State -->
+        <div id="loading-state" class="text-center py-20">
+            <i class="fas fa-spinner fa-spin text-5xl mb-4"></i>
+            <p class="text-xl animate-pulse">Menghubungkan ke Cloud...</p>
+        </div>
+
+        <!-- ================= VIEW: HOME ================= -->
+        <section id="view-home" class="hidden-view">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Action Cards -->
+                <div class="col-span-1 flex flex-col gap-4">
+                    <button onclick="switchView('login-participant')" class="glass p-8 text-center hover:bg-white/20 transition-all rounded-xl border-t-4 border-blue-400">
+                        <i class="fas fa-user-graduate text-5xl mb-4 text-blue-300"></i>
+                        <h2 class="text-2xl font-bold">Masuk Peserta</h2>
+                        <p class="text-sm opacity-80 mt-2">Mulai ujian dengan PIN Tim Anda</p>
+                    </button>
+                    
+                    <button onclick="switchView('projector')" class="glass p-6 text-center hover:bg-white/20 transition-all rounded-xl border-t-4 border-purple-400">
+                        <i class="fas fa-desktop text-4xl mb-2 text-purple-300"></i>
+                        <h2 class="text-xl font-bold">Live Score Proyektor</h2>
+                    </button>
+
+                    <button onclick="switchView('login-admin')" class="glass p-4 text-center hover:bg-white/20 transition-all rounded-xl border-t-4 border-red-400">
+                        <i class="fas fa-user-shield text-2xl mb-2 text-red-300"></i>
+                        <h2 class="text-lg font-bold">Dashboard Admin</h2>
+                    </button>
+                </div>
+
+                <!-- Teams List -->
+                <div class="col-span-1 md:col-span-2 glass p-6 rounded-xl custom-scroll max-h-[600px] overflow-y-auto">
+                    <h2 class="text-2xl font-bold mb-4 border-b border-white/20 pb-2"><i class="fas fa-users mr-2"></i> Daftar Tim & PIN</h2>
+                    <div id="home-teams-list" class="grid gap-3">
+                        <!-- Injected via JS -->
+                        <p class="text-center opacity-70">Memuat data tim...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= VIEW: LOGIN PARTICIPANT ================= -->
+        <section id="view-login-participant" class="hidden-view max-w-md mx-auto">
+            <div class="glass p-8 rounded-xl text-center">
+                <i class="fas fa-users text-5xl mb-4 text-blue-300"></i>
+                <h2 class="text-2xl font-bold mb-6">Login Tim</h2>
+                <input type="text" id="participant-pin" placeholder="Masukkan PIN Tim (cth: TIM123)" class="glass-input w-full p-4 rounded-lg text-center text-xl mb-4 font-bold tracking-widest">
+                <button onclick="loginParticipant()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition-colors">
+                    Mulai Ujian <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+                <button onclick="switchView('home')" class="mt-4 text-sm opacity-80 hover:opacity-100 underline">Kembali</button>
+            </div>
+        </section>
+
+        <!-- ================= VIEW: CBT TEST ================= -->
+        <section id="view-test" class="hidden-view max-w-4xl mx-auto">
+            <div class="glass p-6 rounded-xl relative">
+                <div class="flex justify-between items-center mb-6 border-b border-white/20 pb-4">
+                    <div>
+                        <h2 id="test-team-name" class="text-xl font-bold text-yellow-300">Nama Tim</h2>
+                        <p class="text-sm">Soal <span id="test-current-q-num">1</span> dari <span id="test-total-q">10</span></p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-mono font-bold bg-white/20 px-4 py-2 rounded-lg" id="test-timer">00:00</div>
+                        <p class="text-xs mt-1">Sisa Waktu Soal</p>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <p id="test-question-text" class="text-xl md:text-2xl leading-relaxed font-medium mb-6">Pertanyaan akan muncul di sini...</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="test-options-container">
+                        <!-- Options injected via JS -->
+                    </div>
+                </div>
+
+                <div class="flex justify-between border-t border-white/20 pt-4">
+                    <p class="text-sm opacity-70">Jawab dengan cepat dan tepat!</p>
+                    <button onclick="submitAnswerAndNext()" id="btn-next-question" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg transition-colors hidden">
+                        Selanjutnya <i class="fas fa-chevron-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= VIEW: TEST FINISHED ================= -->
+        <section id="view-test-finished" class="hidden-view max-w-2xl mx-auto text-center">
+            <div class="glass p-10 rounded-xl">
+                <i class="fas fa-check-circle text-6xl text-green-400 mb-4"></i>
+                <h2 class="text-3xl font-bold mb-2">Ujian Selesai!</h2>
+                <p class="text-lg mb-6">Terima kasih telah berpartisipasi. Hasil Anda telah disimpan.</p>
+                <div class="glass inline-block p-4 rounded-lg mb-8">
+                    <p class="text-sm uppercase tracking-wider opacity-80">Skor Akhir</p>
+                    <p id="finished-score" class="text-5xl font-bold text-yellow-300">0</p>
+                    <p class="text-sm mt-2">Waktu total: <span id="finished-time">0</span> detik</p>
+                </div>
+                <br>
+                <button onclick="logoutParticipant()" class="glass-btn px-6 py-3 rounded-lg font-bold">Keluar <i class="fas fa-sign-out-alt ml-2"></i></button>
+            </div>
+        </section>
+
+        <!-- ================= VIEW: LOGIN ADMIN/PROJECTOR ================= -->
+        <section id="view-login-admin" class="hidden-view max-w-md mx-auto">
+            <div class="glass p-8 rounded-xl text-center">
+                <i id="auth-icon" class="fas fa-lock text-5xl mb-4 text-red-300"></i>
+                <h2 id="auth-title" class="text-2xl font-bold mb-6">Otorisasi Dibutuhkan</h2>
+                <input type="password" id="admin-pin-input" placeholder="Masukkan PIN" class="glass-input w-full p-4 rounded-lg text-center text-xl mb-4 tracking-widest">
+                <button onclick="verifyAdminPin()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg transition-colors">
+                    Masuk <i class="fas fa-unlock ml-2"></i>
+                </button>
+                <button onclick="switchView('home')" class="mt-4 text-sm opacity-80 hover:opacity-100 underline">Batal</button>
+            </div>
+        </section>
+
+        <!-- ================= VIEW: PROJECTOR (LIVE SCORE) ================= -->
+        <section id="view-projector" class="hidden-view">
+            <div class="glass p-6 rounded-xl min-h-[70vh] flex flex-col">
+                <div class="text-center mb-8 border-b border-white/20 pb-4">
+                    <h2 class="text-4xl font-extrabold uppercase tracking-widest text-yellow-300 shadow-sm"><i class="fas fa-trophy mr-3"></i> Klasemen Sementara</h2>
+                    <p class="text-lg opacity-90 mt-2">Cerdas Cermat SD/MI Pulaulaut Selatan</p>
+                </div>
+                
+                <div class="flex-grow">
+                    <div class="grid grid-cols-12 gap-4 font-bold text-lg border-b border-white/40 pb-2 mb-4 px-4 uppercase tracking-wider text-white/80">
+                        <div class="col-span-1 text-center">Pkt</div>
+                        <div class="col-span-6">Nama Tim</div>
+                        <div class="col-span-2 text-center">Skor</div>
+                        <div class="col-span-3 text-right">Waktu (detik)</div>
+                    </div>
+                    <div id="projector-leaderboard" class="flex flex-col gap-3">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= VIEW: ADMIN DASHBOARD ================= -->
+        <section id="view-admin" class="hidden-view">
+            <div class="glass rounded-xl overflow-hidden flex flex-col md:flex-row min-h-[75vh]">
+                
+                <!-- Admin Sidebar -->
+                <div class="w-full md:w-64 bg-black/20 p-4 border-r border-white/10 flex flex-col gap-2">
+                    <div class="text-center pb-4 mb-4 border-b border-white/10">
+                        <i class="fas fa-user-shield text-4xl mb-2 text-red-400"></i>
+                        <h3 class="font-bold text-lg">Panel Admin</h3>
+                    </div>
+                    
+                    <button onclick="switchAdminTab('teams')" class="admin-tab-btn w-full text-left px-4 py-3 rounded-lg hover:bg-white/10 transition-colors" data-tab="teams">
+                        <i class="fas fa-users w-6"></i> Kelola Tim
+                    </button>
+                    <button onclick="switchAdminTab('questions')" class="admin-tab-btn w-full text-left px-4 py-3 rounded-lg hover:bg-white/10 transition-colors" data-tab="questions">
+                        <i class="fas fa-list-ol w-6"></i> Kelola Soal
+                    </button>
+                    <button onclick="switchAdminTab('certificate')" class="admin-tab-btn w-full text-left px-4 py-3 rounded-lg hover:bg-white/10 transition-colors" data-tab="certificate">
+                        <i class="fas fa-certificate w-6"></i> Sertifikat
+                    </button>
+                    <button onclick="switchAdminTab('settings')" class="admin-tab-btn w-full text-left px-4 py-3 rounded-lg hover:bg-white/10 transition-colors" data-tab="settings">
+                        <i class="fas fa-cogs w-6"></i> Pengaturan
+                    </button>
+                    
+                    <div class="mt-auto pt-4 border-t border-white/10">
+                        <button onclick="logoutAdmin()" class="w-full text-left px-4 py-2 text-red-300 hover:text-red-100 transition-colors">
+                            <i class="fas fa-sign-out-alt w-6"></i> Keluar Admin
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Admin Content -->
+                <div class="flex-grow p-6 relative overflow-y-auto custom-scroll max-h-[75vh]">
+                    
+                    <!-- Tab: Teams -->
+                    <div id="admin-tab-teams" class="admin-tab">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold">Manajemen Tim Peserta</h2>
+                            <button onclick="addTeamPrompt()" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg font-bold shadow-lg"><i class="fas fa-plus mr-2"></i>Tambah Tim</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="border-b border-white/20">
+                                        <th class="py-3 px-2">Nama Tim</th>
+                                        <th class="py-3 px-2">PIN</th>
+                                        <th class="py-3 px-2">Skor</th>
+                                        <th class="py-3 px-2">Waktu (s)</th>
+                                        <th class="py-3 px-2">Status</th>
+                                        <th class="py-3 px-2 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-teams-table">
+                                    <!-- Injected via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-4">
+                            <button onclick="resetAllScores()" class="text-sm bg-red-500/50 hover:bg-red-500 px-3 py-1 rounded transition-colors"><i class="fas fa-undo"></i> Reset Semua Skor</button>
+                        </div>
+                    </div>
+
+                    <!-- Tab: Questions -->
+                    <div id="admin-tab-questions" class="admin-tab hidden-view">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                            <h2 class="text-2xl font-bold">Bank Soal</h2>
+                            <div class="flex gap-2 flex-wrap">
+                                <button onclick="generateAIQuestions()" class="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded-lg font-bold shadow-lg"><i class="fas fa-robot mr-2"></i>Generate AI (Gemini)</button>
+                                <button onclick="addQuestionPrompt()" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-bold shadow-lg"><i class="fas fa-plus mr-2"></i>Tambah Manual</button>
+                            </div>
+                        </div>
+                        <p class="text-sm opacity-80 mb-4">Total Soal: <span id="admin-total-q">0</span></p>
+                        <div id="admin-questions-list" class="grid gap-4">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Tab: Certificate -->
+                    <div id="admin-tab-certificate" class="admin-tab hidden-view">
+                        <h2 class="text-2xl font-bold mb-6">Generator Sertifikat</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="glass p-4 rounded-lg">
+                                <h3 class="font-bold mb-4 border-b border-white/20 pb-2">Desain & Pengaturan</h3>
+                                
+                                <label class="block text-sm mb-1 mt-3">Nama Penerima</label>
+                                <input type="text" id="cert-input-name" class="glass-input w-full p-2 rounded mb-3" value="Nama Peserta / Tim">
+                                
+                                <label class="block text-sm mb-1">Keterangan / Prestasi</label>
+                                <textarea id="cert-input-desc" class="glass-input w-full p-2 rounded mb-3 h-20">Atas prestasinya sebagai Juara 1 dalam Lomba Cerdas Cermat Tingkat SD/MI se-Kecamatan Pulaulaut Selatan Tahun 2026.</textarea>
+                                
+                                <label class="block text-sm mb-1">Tanggal</label>
+                                <input type="text" id="cert-input-date" class="glass-input w-full p-2 rounded mb-3" value="25 Oktober 2026">
+                                
+                                <div class="grid grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <label class="block text-sm mb-1">Ukuran Kertas</label>
+                                        <select id="cert-input-size" class="glass-input w-full p-2 rounded [&>option]:text-black">
+                                            <option value="A4">A4 (210 x 297 mm)</option>
+                                            <option value="F4">F4 (215 x 330 mm)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm mb-1">Orientasi</label>
+                                        <select id="cert-input-orientation" class="glass-input w-full p-2 rounded [&>option]:text-black">
+                                            <option value="landscape">Landscape</option>
+                                            <option value="portrait">Portrait</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <button onclick="printCertificate()" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg mt-4">
+                                    <i class="fas fa-print mr-2"></i> Cetak Sertifikat
+                                </button>
+                            </div>
+                            
+                            <div class="bg-white/10 p-4 rounded-lg flex items-center justify-center border border-dashed border-white/30">
+                                <div class="text-center opacity-70">
+                                    <i class="fas fa-file-contract text-6xl mb-4"></i>
+                                    <p>Pratinjau akan menyesuaikan saat dicetak.<br>Pastikan mengaktifkan "Background Graphics" pada pengaturan cetak browser Anda.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab: Settings -->
+                    <div id="admin-tab-settings" class="admin-tab hidden-view">
+                        <h2 class="text-2xl font-bold mb-6">Pengaturan Aplikasi</h2>
+                        
+                        <div class="glass p-6 rounded-lg max-w-xl mb-6">
+                            <h3 class="font-bold mb-4 border-b border-white/20 pb-2"><i class="fas fa-id-badge mr-2"></i>Profil Admin</h3>
+                            
+                            <label class="block text-sm mb-1">Nama Admin</label>
+                            <input type="text" id="setting-admin-name" class="glass-input w-full p-3 rounded mb-4" placeholder="Cth: Panitia CBT">
+                            
+                            <label class="block text-sm mb-1">Nomor WhatsApp (Kontak Bantuan)</label>
+                            <input type="text" id="setting-admin-contact" class="glass-input w-full p-3 rounded mb-4" placeholder="Cth: 6281234567890 (Gunakan 62)">
+                            
+                            <button onclick="saveAdminProfile()" class="bg-blue-500 hover:bg-blue-600 px-6 py-2 rounded font-bold transition-colors">Simpan Profil</button>
+                        </div>
+
+                        <div class="glass p-6 rounded-lg max-w-xl border border-red-500/30">
+                            <h3 class="font-bold mb-4 border-b border-white/20 pb-2 text-red-300"><i class="fas fa-key mr-2"></i>Keamanan</h3>
+                            
+                            <label class="block text-sm mb-1">PIN Admin Baru</label>
+                            <input type="password" id="setting-new-pin" class="glass-input w-full p-3 rounded mb-4" placeholder="Masukkan PIN baru">
+                            <p class="text-xs opacity-70 mb-4">PIN Default adalah <strong>admin8899</strong>. PIN ini digunakan untuk masuk Admin dan Proyektor.</p>
+                            
+                            <button onclick="changeAdminPin()" class="bg-red-500 hover:bg-red-600 px-6 py-2 rounded font-bold transition-colors">Ubah PIN</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ================= PRINT AREA FOR CERTIFICATE ================= -->
+    <div id="cert-print-area" class="hidden">
+        <div id="certificate-wrapper" class="certificate-wrapper cert-landscape-a4">
+            <div class="certificate-border">
+                <div class="certificate-inner">
+                    <h1 class="cert-title">Sertifikat Penghargaan</h1>
+                    <div class="cert-subtitle">Cerdas Cermat Tingkat SD/MI Kec. Pulaulaut Selatan</div>
+                    <div class="cert-presents">diberikan kepada</div>
+                    <div id="print-cert-name" class="cert-name">Nama Penerima</div>
+                    <div id="print-cert-desc" class="cert-desc">Atas prestasinya sebagai peserta terbaik dalam kompetisi pendidikan yang diselenggarakan pada tahun 2026.</div>
+                    
+                    <div class="cert-footer">
+                        <div>
+                            <p>Kec. Pulaulaut Selatan, <span id="print-cert-date">25 Oktober 2026</span></p>
+                            <div style="height: 50px;"></div>
+                            <div class="cert-signature">Ketua Panitia</div>
+                        </div>
+                        <div>
+                            <p>&nbsp;</p>
+                            <div style="height: 50px;"></div>
+                            <div class="cert-signature">Kepala Instansi</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, getDocs, updateDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Constants & Config
+        const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'cbt-cerdas-cermat-' + Math.random().toString(36).substr(2, 9);
+        const FIREBASE_CONFIG = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            // Fallback config normally goes here. In this environment, __firebase_config is injected.
+        };
+        const CUSTOM_TOKEN = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // Firebase Paths (RULE 1)
+        const PATH_TEAMS = `artifacts/${APP_ID}/public/data/teams`;
+        const PATH_QUESTIONS = `artifacts/${APP_ID}/public/data/questions`;
+        const PATH_SETTINGS = `artifacts/${APP_ID}/public/data/settings`;
+
+        // App State
+        window.appState = {
+            teams: [],
+            questions: [],
+            settings: { adminPin: 'admin8899', adminName: 'Panitia', adminContact: '' },
+            currentTeam: null, // For participant
+            testState: {
+                currentIndex: 0,
+                score: 0,
+                timeSpent: 0, // total seconds spent
+                questionTimer: null,
+                timeRemaining: 0,
+                startTime: 0
+            },
+            authTargetView: '' // 'admin' or 'projector'
+        };
+
+        // Initialize Firebase
+        let app, db, auth;
+        try {
+            app = initializeApp(FIREBASE_CONFIG);
+            db = getFirestore(app);
+            auth = getAuth(app);
+        } catch (e) {
+            console.error("Firebase init error:", e);
+        }
+
+        // Main Initialization
+        async function initApp() {
+            try {
+                if (CUSTOM_TOKEN) {
+                    await signInWithCustomToken(auth, CUSTOM_TOKEN);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                setupRealtimeListeners();
+            } catch (error) {
+                console.error("Authentication failed:", error);
+                document.getElementById('loading-state').innerHTML = `<p class="text-red-500">Gagal terhubung ke server database.<br>${error.message}</p>`;
+            }
+        }
+
+        function setupRealtimeListeners() {
+            // Listen to Settings (docId: global)
+            const settingsDocRef = doc(db, PATH_SETTINGS, 'global');
+            onSnapshot(settingsDocRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    window.appState.settings = docSnap.data();
+                } else {
+                    // Create default settings if not exists
+                    setDoc(settingsDocRef, window.appState.settings);
+                }
+                updateFloatingContact();
+            }, (err) => console.error("Settings listener error:", err));
+
+            // Listen to Teams (RULE 2: No complex queries, fetch all and sort in memory)
+            const teamsColRef = collection(db, PATH_TEAMS);
+            onSnapshot(teamsColRef, (snapshot) => {
+                let teams = [];
+                snapshot.forEach((doc) => {
+                    teams.push({ id: doc.id, ...doc.data() });
+                });
+                // Sort in memory: Highest Score first, then Lowest Time
+                teams.sort((a, b) => {
+                    if (b.score !== a.score) return b.score - a.score;
+                    return a.timeTaken - b.timeTaken;
+                });
+                window.appState.teams = teams;
+                renderHomeTeams();
+                renderAdminTeams();
+                renderProjector();
+                
+                // Hide loading, show home if currentView is empty
+                document.getElementById('loading-state').style.display = 'none';
+                if(!document.querySelector('.hidden-view:not(#view-home)')) {
+                    if(document.getElementById('app-container').classList.contains('loading-done') === false){
+                         document.getElementById('app-container').classList.add('loading-done');
+                         switchView('home');
+                    }
+                }
+            }, (err) => console.error("Teams listener error:", err));
+
+            // Listen to Questions
+            const qColRef = collection(db, PATH_QUESTIONS);
+            onSnapshot(qColRef, (snapshot) => {
+                let qs = [];
+                snapshot.forEach((doc) => {
+                    qs.push({ id: doc.id, ...doc.data() });
+                });
+                // Sort by creation time or id to maintain order
+                qs.sort((a, b) => a.order - b.order); 
+                window.appState.questions = qs;
+                renderAdminQuestions();
+            }, (err) => console.error("Questions listener error:", err));
+        }
+
+        // ================= UI ROUTING & HELPERS =================
+        window.switchView = function(viewId) {
+            const views = document.querySelectorAll('section');
+            views.forEach(v => v.classList.add('hidden-view'));
+            
+            const target = document.getElementById(`view-${viewId}`);
+            if (target) {
+                target.classList.remove('hidden-view');
+            }
+            
+            // Clear inputs based on view
+            if (viewId === 'home') {
+                document.getElementById('participant-pin').value = '';
+                document.getElementById('admin-pin-input').value = '';
+            } else if (viewId === 'login-admin' || viewId === 'login-projector') {
+                const isProj = viewId === 'login-projector';
+                document.getElementById('auth-icon').className = isProj ? 'fas fa-desktop text-5xl mb-4 text-purple-300' : 'fas fa-lock text-5xl mb-4 text-red-300';
+                document.getElementById('auth-title').innerText = isProj ? 'Akses Proyektor' : 'Akses Admin';
+                document.getElementById('view-login-admin').classList.remove('hidden-view'); // use same view for auth
+                window.appState.authTargetView = isProj ? 'projector' : 'admin';
+                if(isProj) document.getElementById(`view-login-projector`)?.classList.add('hidden-view');
+            }
+
+            // Update admin settings tab inputs when entering admin
+            if (viewId === 'admin') {
+                document.getElementById('setting-admin-name').value = window.appState.settings.adminName || '';
+                document.getElementById('setting-admin-contact').value = window.appState.settings.adminContact || '';
+            }
+        };
+
+        window.switchAdminTab = function(tabName) {
+            document.querySelectorAll('.admin-tab').forEach(t => t.classList.add('hidden-view'));
+            document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('bg-white/20', 'border-l-4', 'border-blue-400'));
+            
+            document.getElementById(`admin-tab-${tabName}`).classList.remove('hidden-view');
+            
+            const btn = document.querySelector(`.admin-tab-btn[data-tab="${tabName}"]`);
+            if(btn) btn.classList.add('bg-white/20', 'border-l-4', 'border-blue-400');
+        };
+
+        function updateFloatingContact() {
+            const btn = document.getElementById('btnHubungiAdmin');
+            const contact = window.appState.settings.adminContact;
+            if (contact && contact.trim() !== '') {
+                btn.href = `https://wa.me/${contact.replace(/[^0-9]/g, '')}`;
+                btn.classList.remove('hidden');
+            } else {
+                btn.classList.add('hidden');
+            }
+        }
+
+        // ================= RENDERING LOGIC =================
+        function renderHomeTeams() {
+            const container = document.getElementById('home-teams-list');
+            if (window.appState.teams.length === 0) {
+                container.innerHTML = '<p class="text-center opacity-70 italic py-4">Belum ada tim terdaftar.</p>';
+                return;
+            }
+            let html = '';
+            window.appState.teams.forEach(team => {
+                const status = team.finished ? '<span class="text-xs bg-green-500/80 px-2 py-1 rounded ml-2">Selesai</span>' : '';
+                html += `
+                <div class="flex justify-between items-center bg-white/10 p-3 rounded border border-white/10 hover:bg-white/20 transition-colors">
+                    <div class="font-bold flex items-center">
+                        <i class="fas fa-users text-blue-300 mr-2 w-5"></i> 
+                        ${team.name} ${status}
+                    </div>
+                    <div class="font-mono bg-black/30 px-3 py-1 rounded text-yellow-300 tracking-wider text-sm border border-yellow-500/30">
+                        PIN: ${team.pin}
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function renderAdminTeams() {
+            const tbody = document.getElementById('admin-teams-table');
+            if (!tbody) return;
+            let html = '';
+            window.appState.teams.forEach((team, index) => {
+                html += `
+                <tr class="border-b border-white/10 hover:bg-white/5 transition-colors">
+                    <td class="py-3 px-2 font-bold">${team.name}</td>
+                    <td class="py-3 px-2 font-mono text-yellow-300">${team.pin}</td>
+                    <td class="py-3 px-2 text-green-300 font-bold">${team.score || 0}</td>
+                    <td class="py-3 px-2">${team.timeTaken || 0}</td>
+                    <td class="py-3 px-2">${team.finished ? '<span class="text-green-400"><i class="fas fa-check"></i> Selesai</span>' : '<span class="text-blue-400">Siap</span>'}</td>
+                    <td class="py-3 px-2 text-right">
+                        <button onclick="editTeam('${team.id}')" class="text-blue-300 hover:text-blue-100 mr-2" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteTeam('${team.id}')" class="text-red-400 hover:text-red-200" title="Hapus"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function renderAdminQuestions() {
+            const container = document.getElementById('admin-questions-list');
+            const totalSpan = document.getElementById('admin-total-q');
+            if(!container) return;
+            
+            totalSpan.innerText = window.appState.questions.length;
+            
+            if (window.appState.questions.length === 0) {
+                container.innerHTML = '<div class="glass p-6 text-center opacity-70">Belum ada soal. Tambahkan manual atau generate dengan AI.</div>';
+                return;
+            }
+            
+            let html = '';
+            window.appState.questions.forEach((q, index) => {
+                html += `
+                <div class="bg-white/10 p-4 rounded-lg border border-white/20 relative group">
+                    <div class="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onclick="editQuestion('${q.id}')" class="bg-blue-500 hover:bg-blue-600 p-2 rounded-full w-8 h-8 flex items-center justify-center text-xs"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteQuestion('${q.id}')" class="bg-red-500 hover:bg-red-600 p-2 rounded-full w-8 h-8 flex items-center justify-center text-xs"><i class="fas fa-trash"></i></button>
+                    </div>
+                    <h4 class="font-bold mb-2 pr-16"><span class="text-blue-300 mr-2">${index + 1}.</span> ${q.text}</h4>
+                    <div class="grid grid-cols-2 gap-2 text-sm opacity-90 pl-6 mb-3">
+                        <div class="${q.answer === 'A' ? 'text-green-400 font-bold' : ''}">A. ${q.optA}</div>
+                        <div class="${q.answer === 'B' ? 'text-green-400 font-bold' : ''}">B. ${q.optB}</div>
+                        <div class="${q.answer === 'C' ? 'text-green-400 font-bold' : ''}">C. ${q.optC}</div>
+                        <div class="${q.answer === 'D' ? 'text-green-400 font-bold' : ''}">D. ${q.optD}</div>
+                    </div>
+                    <div class="pl-6 text-xs text-yellow-300">
+                        <i class="fas fa-clock mr-1"></i> Timer: ${q.timeLimit} detik
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function renderProjector() {
+            const container = document.getElementById('projector-leaderboard');
+            if(!container) return;
+            
+            if (window.appState.teams.length === 0) {
+                container.innerHTML = '<p class="text-center opacity-70 italic py-8 text-xl">Menunggu data peserta...</p>';
+                return;
+            }
+
+            let html = '';
+            // Data is already sorted by score DESC, time ASC
+            window.appState.teams.forEach((team, index) => {
+                let medal = '';
+                let bgClass = 'bg-white/10 border-white/10';
+                if (index === 0 && team.score > 0) {
+                    medal = '<i class="fas fa-medal text-yellow-400 text-xl ml-2 shadow-yellow"></i>';
+                    bgClass = 'bg-gradient-to-r from-yellow-600/40 to-yellow-900/40 border-yellow-500/50 transform scale-[1.02] shadow-lg';
+                } else if (index === 1 && team.score > 0) {
+                    medal = '<i class="fas fa-medal text-gray-300 text-lg ml-2"></i>';
+                    bgClass = 'bg-gray-500/20 border-gray-400/30';
+                } else if (index === 2 && team.score > 0) {
+                    medal = '<i class="fas fa-medal text-amber-600 text-lg ml-2"></i>';
+                    bgClass = 'bg-amber-800/20 border-amber-600/30';
+                }
+
+                html += `
+                <div class="grid grid-cols-12 gap-4 items-center ${bgClass} p-4 rounded-lg border transition-all duration-500">
+                    <div class="col-span-1 text-center font-bold text-2xl">${index + 1}</div>
+                    <div class="col-span-6 font-bold text-xl flex items-center">${team.name} ${medal}</div>
+                    <div class="col-span-2 text-center text-3xl font-extrabold text-green-400 drop-shadow-md">${team.score || 0}</div>
+                    <div class="col-span-3 text-right text-xl font-mono text-blue-200">${team.timeTaken || 0}</div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        // ================= AUTHENTICATION LOGIC =================
+        window.verifyAdminPin = function() {
+            const input = document.getElementById('admin-pin-input').value;
+            if (input === window.appState.settings.adminPin) {
+                if (window.appState.authTargetView === 'admin') {
+                    switchView('admin');
+                    switchAdminTab('teams');
+                } else {
+                    switchView('projector');
+                }
+                document.getElementById('admin-pin-input').value = '';
+            } else {
+                Swal.fire('Akses Ditolak', 'PIN yang Anda masukkan salah.', 'error');
+            }
+        };
+
+        window.logoutAdmin = function() {
+            switchView('home');
+        };
+
+        // ================= PARTICIPANT LOGIC =================
+        window.loginParticipant = function() {
+            const pin = document.getElementById('participant-pin').value.trim();
+            if (!pin) {
+                Swal.fire('Perhatian', 'Silakan masukkan PIN Tim Anda.', 'warning');
+                return;
+            }
+
+            const team = window.appState.teams.find(t => t.pin === pin);
+            if (!team) {
+                Swal.fire('Gagal', 'PIN Tim tidak ditemukan.', 'error');
+                return;
+            }
+
+            if (team.finished) {
+                Swal.fire('Selesai', 'Tim Anda sudah menyelesaikan ujian ini.', 'info');
+                return;
+            }
+
+            if (window.appState.questions.length === 0) {
+                Swal.fire('Oops', 'Soal belum tersedia. Hubungi admin.', 'warning');
+                return;
+            }
+
+            // Init Test State
+            window.appState.currentTeam = team;
+            window.appState.testState = {
+                currentIndex: 0,
+                score: 0,
+                timeSpent: 0,
+                questionTimer: null,
+                timeRemaining: 0,
+                startTime: Date.now()
+            };
+
+            switchView('test');
+            loadQuestion();
+        };
+
+        function loadQuestion() {
+            const state = window.appState.testState;
+            const q = window.appState.questions[state.currentIndex];
+            
+            document.getElementById('test-team-name').innerText = window.appState.currentTeam.name;
+            document.getElementById('test-current-q-num').innerText = state.currentIndex + 1;
+            document.getElementById('test-total-q').innerText = window.appState.questions.length;
+            document.getElementById('test-question-text').innerText = q.text;
+            
+            // Render Options
+            const optsContainer = document.getElementById('test-options-container');
+            optsContainer.innerHTML = '';
+            
+            const options = [
+                { key: 'A', text: q.optA },
+                { key: 'B', text: q.optB },
+                { key: 'C', text: q.optC },
+                { key: 'D', text: q.optD }
+            ];
+
+            options.forEach(opt => {
+                optsContainer.innerHTML += `
+                    <button onclick="selectOption('${opt.key}')" class="test-opt-btn bg-white/10 hover:bg-white/20 border border-white/20 text-left p-4 rounded-lg transition-all text-lg flex items-start gap-3 w-full">
+                        <span class="font-bold bg-blue-500/50 w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-full">${opt.key}</span>
+                        <span>${opt.text}</span>
+                    </button>
+                `;
+            });
+
+            document.getElementById('btn-next-question').classList.add('hidden');
+            
+            // Setup Timer
+            state.timeRemaining = q.timeLimit || 60;
+            updateTimerDisplay();
+            
+            if(state.questionTimer) clearInterval(state.questionTimer);
+            state.questionTimer = setInterval(() => {
+                state.timeRemaining--;
+                state.timeSpent++; // track total time
+                updateTimerDisplay();
+                
+                if (state.timeRemaining <= 0) {
+                    clearInterval(state.questionTimer);
+                    submitAnswerAndNext(null); // Time out, wrong answer
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const timerEl = document.getElementById('test-timer');
+            const rem = window.appState.testState.timeRemaining;
+            const m = Math.floor(rem / 60).toString().padStart(2, '0');
+            const s = (rem % 60).toString().padStart(2, '0');
+            timerEl.innerText = `${m}:${s}`;
+            
+            if (rem <= 10) {
+                timerEl.classList.add('text-red-400', 'animate-pulse');
+            } else {
+                timerEl.classList.remove('text-red-400', 'animate-pulse');
+            }
+        }
+
+        window.selectOption = function(key) {
+            // Visual selection
+            document.querySelectorAll('.test-opt-btn').forEach(b => {
+                b.classList.remove('bg-blue-500/40', 'border-blue-400', 'ring-2', 'ring-blue-300');
+            });
+            const selectedBtn = Array.from(document.querySelectorAll('.test-opt-btn')).find(b => b.innerText.startsWith(key));
+            if(selectedBtn) {
+                selectedBtn.classList.add('bg-blue-500/40', 'border-blue-400', 'ring-2', 'ring-blue-300');
+            }
+            
+            window.appState.testState.selectedAnswer = key;
+            document.getElementById('btn-next-question').classList.remove('hidden');
+        };
+
+        window.submitAnswerAndNext = async function(forcedAnswer = undefined) {
+            const state = window.appState.testState;
+            clearInterval(state.questionTimer);
+            
+            const q = window.appState.questions[state.currentIndex];
+            const answer = forcedAnswer !== undefined ? forcedAnswer : state.selectedAnswer;
+            
+            // Scoring logic: 10 points per correct answer
+            if (answer === q.answer) {
+                state.score += 10;
+            }
+            
+            // Clean up selection for next
+            state.selectedAnswer = null;
+
+            // Move to next or finish
+            if (state.currentIndex < window.appState.questions.length - 1) {
+                state.currentIndex++;
+                loadQuestion();
+            } else {
+                finishTest();
+            }
+        };
+
+        async function finishTest() {
+            const state = window.appState.testState;
+            const team = window.appState.currentTeam;
+            
+            // Save to Firebase (Auth guard implemented inside function definition)
+            if(!auth.currentUser) {
+                Swal.fire('Error', 'Sesi terputus. Hasil tidak dapat disimpan.', 'error');
+                return;
+            }
+            
+            try {
+                const teamRef = doc(db, PATH_TEAMS, team.id);
+                await updateDoc(teamRef, {
+                    score: state.score,
+                    timeTaken: state.timeSpent,
+                    finished: true
+                });
+                
+                // Show Finished View
+                document.getElementById('finished-score').innerText = state.score;
+                document.getElementById('finished-time').innerText = state.timeSpent;
+                switchView('test-finished');
+                
+                // Trigger Confetti locally
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                
+            } catch (err) {
+                console.error("Error saving score:", err);
+                Swal.fire('Error', 'Gagal menyimpan skor ke cloud.', 'error');
+            }
+        }
+
+        window.logoutParticipant = function() {
+            window.appState.currentTeam = null;
+            switchView('home');
+        };
+
+        // ================= ADMIN LOGIC: TEAMS =================
+        window.addTeamPrompt = async function() {
+            const { value: formValues } = await Swal.fire({
+                title: 'Tambah Tim',
+                html:
+                    '<input id="swal-input1" class="swal2-input" placeholder="Nama Tim (cth: SDN 1 Pulaulaut)">' +
+                    '<input id="swal-input2" class="swal2-input" placeholder="PIN Unik (cth: TIM01)">',
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonText: 'Simpan',
+                preConfirm: () => {
+                    return [
+                        document.getElementById('swal-input1').value,
+                        document.getElementById('swal-input2').value
+                    ]
+                }
+            });
+
+            if (formValues) {
+                const [name, pin] = formValues;
+                if (!name || !pin) return Swal.fire('Error', 'Data tidak boleh kosong', 'error');
+                
+                if (!auth.currentUser) return;
+                try {
+                    const newTeamRef = doc(collection(db, PATH_TEAMS));
+                    await setDoc(newTeamRef, {
+                        name: name,
+                        pin: pin,
+                        score: 0,
+                        timeTaken: 0,
+                        finished: false
+                    });
+                    Swal.fire('Sukses', 'Tim berhasil ditambahkan', 'success');
+                } catch(e) {
+                    Swal.fire('Error', e.message, 'error');
+                }
+            }
+        };
+
+        window.deleteTeam = async function(id) {
+            const result = await Swal.fire({
+                title: 'Hapus Tim?',
+                text: "Data tim dan skor akan hilang permanen!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus'
+            });
+            if(result.isConfirmed) {
+                if(!auth.currentUser) return;
+                await deleteDoc(doc(db, PATH_TEAMS, id));
+            }
+        };
+
+        window.editTeam = async function(id) {
+            const team = window.appState.teams.find(t => t.id === id);
+            if(!team) return;
+
+            const { value: formValues } = await Swal.fire({
+                title: 'Edit Tim',
+                html:
+                    `<label class="block text-left text-sm text-gray-500 mb-1">Nama Tim</label>
+                     <input id="swal-input1" class="swal2-input m-0 w-full mb-3" value="${team.name}">
+                     <label class="block text-left text-sm text-gray-500 mb-1">PIN</label>
+                     <input id="swal-input2" class="swal2-input m-0 w-full mb-3" value="${team.pin}">
+                     <label class="block text-left text-sm text-gray-500 mb-1">Status Selesai</label>
+                     <select id="swal-input3" class="swal2-input m-0 w-full"><option value="false" ${!team.finished?'selected':''}>Belum/Ulang</option><option value="true" ${team.finished?'selected':''}>Selesai</option></select>`,
+                focusConfirm: false,
+                showCancelButton: true,
+                preConfirm: () => {
+                    return {
+                        name: document.getElementById('swal-input1').value,
+                        pin: document.getElementById('swal-input2').value,
+                        finished: document.getElementById('swal-input3').value === 'true'
+                    }
+                }
+            });
+
+            if(formValues) {
+                if(!auth.currentUser) return;
+                await updateDoc(doc(db, PATH_TEAMS, id), {
+                    name: formValues.name,
+                    pin: formValues.pin,
+                    finished: formValues.finished
+                });
+            }
+        };
+
+        window.resetAllScores = async function() {
+            const result = await Swal.fire({
+                title: 'Reset Semua Skor?',
+                text: "Skor, waktu, dan status semua tim akan di-nol-kan. Lanjutkan?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Ya, Reset!'
+            });
+
+            if(result.isConfirmed) {
+                if(!auth.currentUser) return;
+                Swal.fire({title: 'Memproses...', allowOutsideClick: false});
+                Swal.showLoading();
+                
+                try {
+                    const batch = writeBatch(db);
+                    window.appState.teams.forEach(team => {
+                        const ref = doc(db, PATH_TEAMS, team.id);
+                        batch.update(ref, { score: 0, timeTaken: 0, finished: false });
+                    });
+                    await batch.commit();
+                    Swal.fire('Berhasil', 'Semua skor telah direset', 'success');
+                } catch(e) {
+                    Swal.fire('Error', e.message, 'error');
+                }
+            }
+        };
+
+        // ================= ADMIN LOGIC: QUESTIONS =================
+        window.addQuestionPrompt = async function() {
+            showQuestionModal(null);
+        };
+        
+        window.editQuestion = async function(id) {
+            const q = window.appState.questions.find(x => x.id === id);
+            if(q) showQuestionModal(q);
+        };
+
+        async function showQuestionModal(qObj) {
+            const isEdit = !!qObj;
+            const html = `
+                <div class="text-left">
+                    <label class="block text-sm mb-1 text-gray-700">Pertanyaan</label>
+                    <textarea id="q-text" class="w-full border rounded p-2 mb-3 text-black h-24">${isEdit ? qObj.text : ''}</textarea>
+                    
+                    <div class="grid grid-cols-2 gap-2 mb-3">
+                        <div><label class="text-xs text-gray-600">Opsi A</label><input id="q-a" class="w-full border rounded p-1 text-black" value="${isEdit ? qObj.optA : ''}"></div>
+                        <div><label class="text-xs text-gray-600">Opsi B</label><input id="q-b" class="w-full border rounded p-1 text-black" value="${isEdit ? qObj.optB : ''}"></div>
+                        <div><label class="text-xs text-gray-600">Opsi C</label><input id="q-c" class="w-full border rounded p-1 text-black" value="${isEdit ? qObj.optC : ''}"></div>
+                        <div><label class="text-xs text-gray-600">Opsi D</label><input id="q-d" class="w-full border rounded p-1 text-black" value="${isEdit ? qObj.optD : ''}"></div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-sm text-gray-700 block mb-1">Kunci Jawaban</label>
+                            <select id="q-ans" class="w-full border rounded p-2 text-black">
+                                <option value="A" ${isEdit && qObj.answer === 'A' ? 'selected':''}>A</option>
+                                <option value="B" ${isEdit && qObj.answer === 'B' ? 'selected':''}>B</option>
+                                <option value="C" ${isEdit && qObj.answer === 'C' ? 'selected':''}>C</option>
+                                <option value="D" ${isEdit && qObj.answer === 'D' ? 'selected':''}>D</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-700 block mb-1">Waktu (Detik)</label>
+                            <input type="number" id="q-time" class="w-full border rounded p-2 text-black" value="${isEdit ? qObj.timeLimit : 60}">
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const { isConfirmed } = await Swal.fire({
+                title: isEdit ? 'Edit Soal' : 'Tambah Soal',
+                html: html,
+                width: '600px',
+                showCancelButton: true,
+                confirmButtonText: 'Simpan',
+                preConfirm: () => {
+                    return {
+                        text: document.getElementById('q-text').value,
+                        optA: document.getElementById('q-a').value,
+                        optB: document.getElementById('q-b').value,
+                        optC: document.getElementById('q-c').value,
+                        optD: document.getElementById('q-d').value,
+                        answer: document.getElementById('q-ans').value,
+                        timeLimit: parseInt(document.getElementById('q-time').value) || 60
+                    }
+                }
+            });
+
+            if (isConfirmed) {
+                const data = Swal.getPopup().querySelector('#q-text').value; // validate
+                if(!data) return;
+                
+                const payload = {
+                    text: document.getElementById('q-text').value,
+                    optA: document.getElementById('q-a').value,
+                    optB: document.getElementById('q-b').value,
+                    optC: document.getElementById('q-c').value,
+                    optD: document.getElementById('q-d').value,
+                    answer: document.getElementById('q-ans').value,
+                    timeLimit: parseInt(document.getElementById('q-time').value) || 60,
+                    order: isEdit ? qObj.order : (window.appState.questions.length + 1)
+                };
+
+                if(!auth.currentUser) return;
+                if (isEdit) {
+                    await updateDoc(doc(db, PATH_QUESTIONS, qObj.id), payload);
+                } else {
+                    await setDoc(doc(collection(db, PATH_QUESTIONS)), payload);
+                }
+            }
+        }
+
+        window.deleteQuestion = async function(id) {
+            const result = await Swal.fire({
+                title: 'Hapus Soal?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Hapus'
+            });
+            if(result.isConfirmed) {
+                if(!auth.currentUser) return;
+                await deleteDoc(doc(db, PATH_QUESTIONS, id));
+            }
+        }
+
+        // ================= AI GENERATION (GEMINI) =================
+        window.generateAIQuestions = async function() {
+            const { value: topic } = await Swal.fire({
+                title: 'Generate Soal AI',
+                input: 'text',
+                inputLabel: 'Masukkan Topik (cth: Matematika SD Kelas 6)',
+                inputPlaceholder: 'Topik soal...',
+                showCancelButton: true
+            });
+
+            if (topic) {
+                Swal.fire({
+                    title: 'AI Sedang Bekerja...',
+                    html: 'Menyusun soal berkualitas dari Gemini AI.<br>Mohon tunggu sebentar.',
+                    allowOutsideClick: false,
+                    didOpen: () => { Swal.showLoading(); }
+                });
+
+                try {
+                    const prompt = `Buatlah 3 soal pilihan ganda (A, B, C, D) tingkat kesulitan sedang untuk cerdas cermat anak SD/MI tentang topik: "${topic}". Kembalikan HANYA dalam format array JSON yang valid tanpa teks markdown lain, formatnya: [{"text": "pertanyaan", "optA": "jawaban A", "optB": "jawaban B", "optC": "jawaban C", "optD": "jawaban D", "answer": "A/B/C/D"}].`;
+                    
+                    const payload = {
+                        contents: [{ parts: [{ text: prompt }] }],
+                        generationConfig: { responseMimeType: "application/json" }
+                    };
+                    
+                    // Empty API key as per instructions. Canvas provides it at runtime.
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=`;
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    const result = await response.json();
+                    if (result.candidates && result.candidates.length > 0) {
+                        const jsonStr = result.candidates[0].content.parts[0].text;
+                        const parsedQ = JSON.parse(jsonStr);
+                        
+                        if (Array.isArray(parsedQ) && auth.currentUser) {
+                            const batch = writeBatch(db);
+                            let startOrder = window.appState.questions.length + 1;
+                            
+                            parsedQ.forEach(q => {
+                                const newRef = doc(collection(db, PATH_QUESTIONS));
+                                batch.set(newRef, {
+                                    text: q.text,
+                                    optA: q.optA,
+                                    optB: q.optB,
+                                    optC: q.optC,
+                                    optD: q.optD,
+                                    answer: q.answer,
+                                    timeLimit: 60,
+                                    order: startOrder++
+                                });
+                            });
+                            
+                            await batch.commit();
+                            Swal.fire('Sukses', `${parsedQ.length} Soal AI berhasil ditambahkan.`, 'success');
+                        }
+                    } else {
+                        throw new Error("Respon AI tidak sesuai format.");
+                    }
+                } catch (error) {
+                    console.error("AI Gen Error:", error);
+                    Swal.fire('Gagal', 'Terjadi kesalahan saat generate AI. Coba lagi.', 'error');
+                }
+            }
+        };
+
+        // ================= ADMIN LOGIC: SETTINGS =================
+        window.saveAdminProfile = async function() {
+            const name = document.getElementById('setting-admin-name').value;
+            const contact = document.getElementById('setting-admin-contact').value;
+            
+            if(!auth.currentUser) return;
+            try {
+                await updateDoc(doc(db, PATH_SETTINGS, 'global'), {
+                    adminName: name,
+                    adminContact: contact
+                });
+                Swal.fire({icon: 'success', title: 'Tersimpan', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000});
+            } catch(e) {
+                Swal.fire('Error', e.message, 'error');
+            }
+        };
+
+        window.changeAdminPin = async function() {
+            const newPin = document.getElementById('setting-new-pin').value;
+            if(!newPin || newPin.length < 4) {
+                return Swal.fire('Peringatan', 'PIN minimal 4 karakter.', 'warning');
+            }
+            if(!auth.currentUser) return;
+            try {
+                await updateDoc(doc(db, PATH_SETTINGS, 'global'), {
+                    adminPin: newPin
+                });
+                document.getElementById('setting-new-pin').value = '';
+                Swal.fire('Sukses', 'PIN Admin berhasil diubah.', 'success');
+            } catch(e) {
+                Swal.fire('Error', e.message, 'error');
+            }
+        };
+
+        // ================= CERTIFICATE GENERATOR =================
+        window.printCertificate = function() {
+            // Apply values to print area
+            document.getElementById('print-cert-name').innerText = document.getElementById('cert-input-name').value;
+            document.getElementById('print-cert-desc').innerText = document.getElementById('cert-input-desc').value;
+            document.getElementById('print-cert-date').innerText = document.getElementById('cert-input-date').value;
+            
+            // Adjust Paper Size and Orientation Classes
+            const size = document.getElementById('cert-input-size').value; // A4 or F4
+            const orient = document.getElementById('cert-input-orientation').value; // landscape or portrait
+            
+            const wrapper = document.getElementById('certificate-wrapper');
+            wrapper.className = `certificate-wrapper cert-${orient}-${size.toLowerCase()}`;
+            
+            // Wait a bit for DOM to apply classes, then print
+            setTimeout(() => {
+                window.print();
+            }, 300);
+        };
+
+        // Boot
+        window.onload = () => {
+            initApp();
+        };
+
+    </script>
+</body>
+</html>
